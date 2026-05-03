@@ -1,9 +1,11 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Estudantil - Entrada</title>
+    <title>Agenda Estudantil</title>
+    <!-- Link para o CSS unificado -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,31 +13,24 @@
     <div class="container">
         <header>
             <h1>Agenda Estudantil</h1>
-            <span id="ano-atual"></span> <!-- O JS vai preencher aqui -->
+            <span id="ano-atual"></span>
         </header>
 
         <main>
+            <!-- Seção de botões para trocar os meses exibidos -->
             <div class="selecao-semestre">
-                <button class="btn-semestre ativo">1º Semestre</button>
-                <button class="btn-semestre">2º Semestre</button>
+                <button id="btn-1sem" class="btn-semestre ativo">1º Semestre</button>
+                <button id="btn-2sem" class="btn-semestre">2º Semestre</button>
             </div>
 
+            <!-- Lista onde o JS vai injetar os meses -->
             <ul class="grid-meses" id="container-meses">
-                <!-- O JavaScript vai gerar os meses aqui dentro dinamicamente -->
+                <!-- Dinâmico via JS -->
             </ul>
         </main>
     </div>
 
-    <!-- Script simples para o Ano Atual -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const spanAno = document.getElementById('ano-atual');
-            const ano = new Date().getFullYear();
-            spanAno.textContent = `Ano Letivo: ${ano}`;
-        });
-    </script>
-
-    <!-- Script simples mudar o semestre selecionado -->
+    <!-- Importante: O script deve vir por último -->
     <script src="js/main.js"></script>
 </body>
 </html>
