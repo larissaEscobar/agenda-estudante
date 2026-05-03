@@ -62,4 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 6. Inicialização: Carrega o 1º semestre por padrão assim que a página abre
+    renderizarMeses(meses.primeiro);
 });
