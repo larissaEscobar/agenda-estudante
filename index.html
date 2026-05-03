@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Estudantil - Entrada</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Agenda Estudantil</h1>
+            <span id="ano-atual"></span> <!-- O JS vai preencher aqui -->
+        </header>
+
+        <main>
+            <div class="selecao-semestre">
+                <button class="btn-semestre ativo">1º Semestre</button>
+                <button class="btn-semestre">2º Semestre</button>
+            </div>
+
+            <ul class="grid-meses" id="container-meses">
+                <!-- Os meses serão gerados ou filtrados aqui futuramente -->
+                <li><a href="mensal.html?mes=0">Janeiro</a></li>
+                <li><a href="mensal.html?mes=1">Fevereiro</a></li>
+                <li><a href="mensal.html?mes=2">Março</a></li>
+                <li><a href="mensal.html?mes=3">Abril</a></li>
+                <li><a href="mensal.html?mes=4">Maio</a></li>
+                <li><a href="mensal.html?mes=5">Junho</a></li>
+            </ul>
+        </main>
+    </div>
+
+    <!-- Script simples para o Ano Atual -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const spanAno = document.getElementById('ano-atual');
+            const ano = new Date().getFullYear();
+            spanAno.textContent = `Ano Letivo: ${ano}`;
+        });
+    </script>
+</body>
+</html>

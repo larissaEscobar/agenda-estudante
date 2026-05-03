@@ -1,0 +1,124 @@
+/* css/style.css */
+
+/* 1. RESET E CONFIGURAÇÕES GLOBAIS
+   Garante que o layout seja consistente em diferentes navegadores. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Garante que padding não aumente o tamanho total dos elementos */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5; /* Cor de fundo suave para destacar a agenda */
+    display: flex;
+    justify-content: center; /* Centraliza a agenda horizontalmente */
+    align-items: flex-start; /* Mantém a agenda no topo da tela */
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* 2. CONTAINER PRINCIPAL (VIEWPORT)
+   Define a largura fixa de 320px conforme solicitado no escopo do projeto. */
+.container {
+    width: 320px; 
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden; /* Mantém o conteúdo dentro das bordas arredondadas */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. CABEÇALHO (UX)
+   Parte visual superior contendo o título e o ano dinâmico. */
+header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 20px 15px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+
+#ano-atual {
+    font-weight: 300;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* 4. ÁREA DE CONTEÚDO (MAIN)
+   Espaçamento interno para as interações do usuário[cite: 1]. */
+main {
+    padding: 20px;
+}
+
+h2 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #444;
+}
+
+/* 5. SELEÇÃO DE SEMESTRE
+   Layout para os botões de escolha entre 1º e 2º semestre. */
+.selecao-semestre {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.btn-semestre {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #4a90e2;
+    background: transparent;
+    color: #4a90e2;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+/* Estado visual do botão selecionado */
+.btn-semestre.ativo {
+    background: #4a90e2;
+    color: white;
+}
+
+/* 6. GRADE DE MESES (GRID SYSTEM)
+   Organiza os meses em 2 colunas para otimizar o espaço vertical de 320px[cite: 1]. */
+.grid-meses {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Divide em duas colunas iguais */
+    gap: 12px; /* Espaçamento entre os cards de meses */
+    list-style: none;
+}
+
+.grid-meses li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fcfcfc;
+    color: #333;
+    text-decoration: none;
+    height: 70px; /* Altura fixa para manter a simetria da grade */
+    border-radius: 10px;
+    border: 1px solid #eee;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Efeito Hover: Feedback visual para o usuário ao passar o mouse[cite: 1] */
+.grid-meses li a:hover {
+    border-color: #4a90e2;
+    background-color: #f0f7ff;
+    transform: translateY(-2px); /* Pequeno salto para indicar interatividade */
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.15);
+}
