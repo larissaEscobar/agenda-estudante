@@ -1,0 +1,33 @@
+<!-- mensal.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Estudantil - Mensal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1 id="nome-mes">Mês</h1>
+            <span id="ano-atual"></span>
+        </header>
+
+        <main>
+            <a href="index.html" class="btn-voltar">← Voltar aos meses</a>
+            
+            <div class="semana-cabecalho">
+                <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+            </div>
+
+            <ul class="grid-dias" id="container-dias">
+                <!-- Dias gerados pelo JS -->
+            </ul>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

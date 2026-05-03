@@ -122,3 +122,64 @@ h2 {
     transform: translateY(-2px); /* Pequeno salto para indicar interatividade */
     box-shadow: 0 4px 8px rgba(74, 144, 226, 0.15);
 }
+
+/* Estilo para o cabeçalho da semana na Tela Mensal */
+.semana-cabecalho {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Mesma estrutura da grade de dias */
+    text-align: center;
+    font-weight: bold;
+    color: #4a90e2;
+    font-size: 0.7rem;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+        /* Estilos específicos para a grade de dias */
+        .grid-dias {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* 7 colunas para os dias da semana */
+            gap: 5px;
+            list-style: none;
+        }
+
+        .grid-dias li a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1; /* Mantém os dias quadradinhos */
+            background-color: #fff;
+            border: 1px solid #eee;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+
+        .grid-dias li a:hover {
+            background-color: #eef5ff;
+            border-color: #4a90e2;
+        }
+
+        /* Destaque visual para dias com tarefas (requisito do professor) */
+        .com-tarefa {
+            background-color: #ffeaa7 !important; /* Cor de atenção sugerida */
+            border: 2px solid #fdcb6e !important;
+            font-weight: bold;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #4a90e2;
+            font-size: 0.8rem;
+        }
+        
+/* Dias que não pertencem ao mês atual */
+.dia-vazio {
+    opacity: 0.3; /* Deixa transparente */
+    pointer-events: none; /* Impede cliques e interação */
+    cursor: default;
+}
