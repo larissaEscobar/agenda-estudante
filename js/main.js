@@ -4,6 +4,11 @@
  * Foco: Manipulação dinâmica do DOM, fluxo de navegação e UX do Calendário.
  */
 
+/**
+ * js/main.js
+ * Versão Consolidada com Formatação de Data Brasileira
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- 1. CONFIGURAÇÕES GERAIS E CAPTURA DE PARÂMETROS ---
@@ -18,13 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
 
-    // Atualiza o Ano Letivo e inclui o Mês (Melhoria de UX solicitada)
+    // Atualiza o Cabeçalho com Padrão Brasileiro: "03 de Maio de 2026"
     spanAno.forEach(span => {
-        let textoExibicao = `Ano Letivo: ${anoAtual}`;
-        if (mesSelecionado !== null) {
-            textoExibicao += ` - ${listaNomesMeses[mesSelecionado]}`;
+        if (diaSelecionado !== null && mesSelecionado !== null) {
+            // Na tela de tarefa ou dia, o título principal já diz "Nova Tarefa" ou "Dia 03"
+            // O subtítulo fica apenas com a data completa
+            span.textContent = `${diaSelecionado.toString().padStart(2, '0')} de ${listaNomesMeses[mesSelecionado]} de ${anoAtual}`;
+        } else if (mesSelecionado !== null) {
+            // Na tela mensal, o título principal é o Nome do Mês. 
+            // O subtítulo fica apenas com o ano para não repetir o mês
+            span.textContent = anoAtual;
+        } else {
+            span.textContent = `Ano Letivo: ${anoAtual}`;
         }
-        span.textContent = textoExibicao;
     });
 
     // --- 2. LÓGICA DA TELA INICIAL (INDEX.HTML) ---
@@ -72,16 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerDias = document.getElementById('container-dias');
 
     if (containerDias && mesSelecionado !== null) {
-        document.getElementById('nome-mes').textContent = listaNomesMeses[mesSelecionado];
+        const nomeMesExibicao = document.getElementById('nome-mes');
+        if (nomeMesExibicao) nomeMesExibicao.textContent = listaNomesMeses[mesSelecionado];
 
         const primeiroDiaSemana = new Date(anoAtual, mesSelecionado, 1).getDay();
         const diasNoMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        const totalDiasAtual = diasNoMes[mesSelecionado];
+        const totalDiasAtual = (mesSelecionado === 1 && (anoAtual % 4 === 0)) ? 29 : diasNoMes[mesSelecionado];
         const ultimoDiaMesAnterior = new Date(anoAtual, mesSelecionado, 0).getDate();
 
         containerDias.innerHTML = '';
 
-        // Dias do mês anterior
         for (let j = primeiroDiaSemana - 1; j >= 0; j--) {
             const li = document.createElement('li');
             li.classList.add('dia-vazio');
@@ -89,22 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
             containerDias.appendChild(li);
         }
 
-        // Dias do mês atual
         for (let i = 1; i <= totalDiasAtual; i++) {
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.href = `diario.html?mes=${mesSelecionado}&dia=${i}`;
             a.textContent = i;
             li.appendChild(a);
-            containerDias.appendChild(li);
-        }
-
-        // Dias do próximo mês
-        const restante = 42 - containerDias.children.length;
-        for (let k = 1; k <= restante; k++) {
-            const li = document.createElement('li');
-            li.classList.add('dia-vazio');
-            li.innerHTML = `<span>${k}</span>`;
             containerDias.appendChild(li);
         }
     }
@@ -114,21 +115,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const tituloDia = document.getElementById('titulo-dia');
 
     if (containerHoras && diaSelecionado !== null) {
-        tituloDia.textContent = `Dia ${diaSelecionado.toString().padStart(2, '0')}`;
+        if (tituloDia) tituloDia.textContent = `Dia ${diaSelecionado.toString().padStart(2, '0')}`;
 
         const btnAdd = document.getElementById('link-adicionar');
         if (btnAdd) {
             btnAdd.href = `formulario.html?mes=${mesSelecionado}&dia=${diaSelecionado}`;
         }
 
-        containerHoras.innerHTML = ''; // Limpa para evitar duplicatas
+        containerHoras.innerHTML = ''; 
 
-        // Loop vai até 24 para mostrar o fechamento do dia (00:00 às 24:00)
         for (let h = 0; h <= 24; h++) {
             const divBloco = document.createElement('div');
             divBloco.classList.add('bloco-hora');
             
-            // Formata a hora (se for 24, exibe 00:00 ou mantém 24:00 conforme preferir)
             const horaExibida = h === 24 ? "24:00" : `${h.toString().padStart(2, '0')}:00`;
             
             divBloco.innerHTML = `
@@ -137,5 +136,26 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             containerHoras.appendChild(divBloco);
         }
+    }
+
+    // --- 5. LÓGICA DO FORMULÁRIO (FORMULARIO.HTML) ---
+    const formTarefa = document.getElementById('form-tarefa');
+
+    if (formTarefa) {
+        formTarefa.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Pegando os valores para testar a captura
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                local: document.getElementById('local').value,
+                inicio: document.getElementById('hora-inicio').value,
+                fim: document.getElementById('hora-fim').value,
+                obs: document.getElementById('observacoes').value
+            };
+            
+            console.log("Dados capturados:", dados);
+            alert(`Tarefa "${dados.titulo}" capturada com sucesso!`);
+            window.location.href = `diario.html?mes=${mesSelecionado}&dia=${diaSelecionado}`;
+        });
     }
 });
