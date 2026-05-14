@@ -134,10 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
         containerHoras.style.overflowY = 'auto';
     }
 
-    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR) ---
+    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR COM VALIDAÇÃO DE CONFLITO) ---
     const form = document.getElementById('form-tarefa');
     
-    // Se for edição, preenche os campos automaticamente
     if (form && editId) {
         const tarefas = buscarTodasTarefas();
         const tarefaParaEditar = tarefas.find(t => t.id == editId);
@@ -154,15 +153,53 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            let tarefas = buscarTodasTarefas();
             
+            const hInicioNova = document.getElementById('hora-inicio').value;
+            const hFimNova = document.getElementById('hora-fim').value;
+            const tituloNova = document.getElementById('titulo').value;
+
+            // Função auxiliar para converter "HH:MM" em minutos totais
+            const paraMinutos = (horario) => {
+                const [h, m] = horario.split(':').map(Number);
+                return (h * 60) + m;
+            };
+
+            const inicioNovo = paraMinutos(hInicioNova);
+            const fimNovo = paraMinutos(hFimNova);
+
+            // Validação 1: Ordem cronológica
+            if (fimNovo <= inicioNovo) {
+                alert("O horário de término deve ser posterior ao início.");
+                return;
+            }
+
+            let tarefas = buscarTodasTarefas();
+
+            // Validação 2: Verificar conflitos no mesmo dia
+            const temConflito = tarefas.find(t => {
+                // Só checa tarefas do mesmo dia/mês, ignorando a própria se for edição
+                if (t.dia !== diaNum || t.mes !== mesIdx) return false;
+                if (editId && t.id == editId) return false;
+
+                const inicioEx = paraMinutos(t.inicio);
+                const fimEx = paraMinutos(t.fim);
+
+                // Lógica de colisão de intervalos
+                return (inicioNovo < fimEx && fimNovo > inicioEx);
+            });
+
+            if (temConflito) {
+                alert(`Conflito de Horário!\nJá existe a tarefa "${temConflito.titulo}" das ${temConflito.inicio} às ${temConflito.fim}.`);
+                return;
+            }
+
             const dadosTarefa = {
                 id: editId ? parseInt(editId) : Date.now(),
                 mes: mesIdx, dia: diaNum,
-                titulo: document.getElementById('titulo').value,
+                titulo: tituloNova,
                 local: document.getElementById('local').value,
-                inicio: document.getElementById('hora-inicio').value,
-                fim: document.getElementById('hora-fim').value,
+                inicio: hInicioNova,
+                fim: hFimNova,
                 obs: document.getElementById('observacoes').value
             };
 
