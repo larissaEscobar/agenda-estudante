@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const mesIdx = params.get('mes') !== null ? parseInt(params.get('mes')) : null;
     const diaNum = params.get('dia') !== null ? parseInt(params.get('dia')) : null;
+    const editId = params.get('editId'); // Parâmetro para edição
     
     const spanAno = document.querySelectorAll('#ano-atual');
     const anoAtual = new Date().getFullYear();
@@ -44,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMeses(semestres[0]);
     }
 
-    // --- 4. CALENDÁRIO MENSAL (CORRIGIDO: DIAS VIZINHOS) ---
+    // --- 4. CALENDÁRIO MENSAL (DIAS VIZINHOS) ---
     const containerDias = document.getElementById('container-dias');
     if (containerDias && mesIdx !== null) {
         const primeiroDiaSemana = new Date(anoAtual, mesIdx, 1).getDay();
@@ -54,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         containerDias.innerHTML = '';
 
-        // Dias do mês anterior
         for (let j = primeiroDiaSemana - 1; j >= 0; j--) {
             const li = document.createElement('li');
             li.classList.add('dia-vazio');
@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
             containerDias.appendChild(li);
         }
 
-        // Dias do mês atual
         for (let i = 1; i <= diasNoMes; i++) {
             const li = document.createElement('li');
             const a = document.createElement('a');
@@ -73,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
             containerDias.appendChild(li);
         }
 
-        // Dias do próximo mês (para completar a grade de 42 espaços ou fechar a semana)
         const totalAteAgora = containerDias.children.length;
         const diasRestantes = (totalAteAgora > 35 ? 42 : 35) - totalAteAgora;
         for (let k = 1; k <= diasRestantes; k++) {
@@ -84,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. TIMELINE DIÁRIA (CORRIGIDO: ROLAGEM E POSIÇÃO) ---
+    // --- 5. TIMELINE DIÁRIA (COM EDIÇÃO E EXCLUSÃO) ---
     const containerHoras = document.getElementById('container-horas');
     if (containerHoras && diaNum) {
         const btnVoltar = document.getElementById('btn-voltar-mes');
@@ -94,24 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (linkAdd) linkAdd.href = `formulario.html?mes=${mesIdx}&dia=${diaNum}`;
 
         containerHoras.innerHTML = '';
-        
-        // Criamos um wrapper relativo para as tarefas "ancorarem" nele
         const timelineContent = document.createElement('div');
         timelineContent.style.position = 'relative';
         timelineContent.style.width = '100%';
-        timelineContent.style.height = `${24 * 60}px`; // Altura total: 1440px (24h * 60px)
+        timelineContent.style.height = `${24 * 60}px`;
 
-        // Gera as linhas de fundo
         for (let h = 0; h < 24; h++) {
             const div = document.createElement('div');
             div.classList.add('bloco-hora');
             div.style.height = '60px';
-            div.style.borderBottom = '1px solid #eee';
             div.innerHTML = `<span class="label-hora">${h.toString().padStart(2, '0')}:00</span>`;
             timelineContent.appendChild(div);
         }
 
-        // Posiciona as tarefas
         const tarefasDoDia = buscarTodasTarefas().filter(t => t.dia === diaNum && t.mes === mesIdx);
         tarefasDoDia.forEach(t => {
             const [hIni, mIni] = t.inicio.split(':').map(Number);
@@ -123,42 +116,82 @@ document.addEventListener('DOMContentLoaded', () => {
             divT.classList.add('tarefa-card');
             divT.style.position = 'absolute';
             divT.style.top = `${topo}px`;
-            divT.style.left = '60px';
-            divT.style.right = '10px';
-            divT.style.height = `${Math.max(altura, 25)}px`;
-            divT.style.zIndex = '10';
-            divT.innerHTML = `<strong>${t.titulo}</strong><br><small>${t.inicio} - ${t.fim}</small>`;
+            divT.style.height = `${Math.max(altura, 35)}px`;
+
+            divT.innerHTML = `
+                <div class="acoes-tarefa">
+                    <span class="btn-acao" onclick="editarTarefa(${t.id})">✏️</span>
+                    <span class="btn-acao" onclick="excluirTarefa(${t.id})">🗑️</span>
+                </div>
+                <strong>${t.titulo}</strong>
+                <small>${t.inicio} - ${t.fim}</small>
+            `;
             timelineContent.appendChild(divT);
         });
 
         containerHoras.appendChild(timelineContent);
-        
-        // Garante que o container tenha rolagem e não quebre o layout
         containerHoras.style.maxHeight = '400px'; 
         containerHoras.style.overflowY = 'auto';
-        containerHoras.style.position = 'relative';
     }
 
-    // --- 6. FORMULÁRIO (SALVAR) ---
+    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR) ---
     const form = document.getElementById('form-tarefa');
+    
+    // Se for edição, preenche os campos automaticamente
+    if (form && editId) {
+        const tarefas = buscarTodasTarefas();
+        const tarefaParaEditar = tarefas.find(t => t.id == editId);
+        if (tarefaParaEditar) {
+            document.getElementById('titulo').value = tarefaParaEditar.titulo;
+            document.getElementById('local').value = tarefaParaEditar.local;
+            document.getElementById('hora-inicio').value = tarefaParaEditar.inicio;
+            document.getElementById('hora-fim').value = tarefaParaEditar.fim;
+            document.getElementById('observacoes').value = tarefaParaEditar.obs;
+            document.querySelector('.btn-salvar').textContent = "Atualizar Tarefa";
+        }
+    }
+
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const nova = {
-                id: Date.now(), mes: mesIdx, dia: diaNum,
+            let tarefas = buscarTodasTarefas();
+            
+            const dadosTarefa = {
+                id: editId ? parseInt(editId) : Date.now(),
+                mes: mesIdx, dia: diaNum,
                 titulo: document.getElementById('titulo').value,
                 local: document.getElementById('local').value,
                 inicio: document.getElementById('hora-inicio').value,
                 fim: document.getElementById('hora-fim').value,
                 obs: document.getElementById('observacoes').value
             };
-            const atuais = buscarTodasTarefas();
-            atuais.push(nova);
-            localStorage.setItem('minha_agenda_tarefas', JSON.stringify(atuais));
-            alert('Tarefa salva!');
+
+            if (editId) {
+                const index = tarefas.findIndex(t => t.id == editId);
+                tarefas[index] = dadosTarefa;
+            } else {
+                tarefas.push(dadosTarefa);
+            }
+
+            localStorage.setItem('minha_agenda_tarefas', JSON.stringify(tarefas));
+            alert(editId ? 'Tarefa atualizada!' : 'Tarefa salva!');
             window.location.href = `diario.html?mes=${mesIdx}&dia=${diaNum}`;
         });
     }
+
+    // --- 7. FUNÇÕES GLOBAIS (WINDOW) PARA AÇÕES ---
+    window.excluirTarefa = (id) => {
+        if (confirm("Deseja realmente apagar esta atividade?")) {
+            let tarefas = buscarTodasTarefas();
+            tarefas = tarefas.filter(t => t.id !== id);
+            localStorage.setItem('minha_agenda_tarefas', JSON.stringify(tarefas));
+            location.reload();
+        }
+    };
+
+    window.editarTarefa = (id) => {
+        window.location.href = `formulario.html?mes=${mesIdx}&dia=${diaNum}&editId=${id}`;
+    };
 
     function buscarTodasTarefas() {
         const d = localStorage.getItem('minha_agenda_tarefas');
