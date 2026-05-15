@@ -1,4 +1,4 @@
-/* Configurações de reset para garantir consistência entre diferentes navegadores */
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
@@ -6,19 +6,18 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Definição do layout da página e alinhamento do viewport */
 body {
     background-color: #f0f2f5;
     display: flex;
-    justify-content: flex-start; 
+    justify-content: flex-start;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 20px 20px 20px 40px; 
+    padding: 20px 20px 20px 40px;
 }
 
-/* Mockup do container mobile: centraliza a aplicação em uma largura fixa */
+/* Container fixo de 320px simula a largura de um celular */
 .container {
-    width: 320px; 
+    width: 320px;
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -27,7 +26,6 @@ body {
     flex-direction: column;
 }
 
-/* Estilização do topo da aplicação e branding */
 header {
     background-color: #4a90e2;
     color: white;
@@ -47,21 +45,20 @@ header h1 {
     display: block;
 }
 
-/* Área principal de interação do usuário */
 main {
     padding: 15px;
 }
 
-/* Estilo para links de navegação secundária */
+/* Link de voltar usado em todas as sub-páginas */
 .btn-voltar {
     display: inline-block;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
     text-decoration: none;
     color: #4a90e2;
     font-size: 0.85rem;
 }
 
-/* Controles de alternância de período (Semestres) */
+/* Alternador de semestre na tela inicial */
 .selecao-semestre {
     display: flex;
     gap: 10px;
@@ -81,13 +78,12 @@ main {
     transition: 0.3s;
 }
 
-/* Feedback visual para o botão de semestre ativo */
 .btn-semestre.ativo {
     background: #4a90e2;
     color: white;
 }
 
-/* Organização visual dos meses na tela principal */
+/* Grid 2 colunas dos meses */
 .grid-meses {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -109,7 +105,7 @@ main {
     transition: all 0.2s ease;
 }
 
-/* Estrutura de cabeçalho dos dias da semana (D S T Q Q S S) */
+/* Cabeçalho D S T Q Q S S do calendário */
 .semana-cabecalho {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -120,7 +116,7 @@ main {
     margin-bottom: 10px;
 }
 
-/* Grid de dias do calendário com proporção 1:1 */
+/* Grid 7 colunas do calendário mensal */
 .grid-dias {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -139,7 +135,7 @@ main {
     position: relative;
 }
 
-/* Estilização para dias que não pertencem ao mês vigente */
+/* Dias fora do mês atual (início e fim do grid) */
 .dia-vazio {
     background-color: #f9f9f9;
     color: #ccc;
@@ -156,24 +152,24 @@ main {
     z-index: 1;
 }
 
-/* Indicador visual para dias com compromissos agendados */
+/* Destaque para dias que têm ao menos uma tarefa cadastrada */
 .dia-com-tarefa {
     background-color: #d1e7ff !important;
     font-weight: bold;
     color: #4a90e2 !important;
 }
 
-/* Área de scroll da timeline de horas */
+/* Área scrollável da timeline — altura máxima para caber na tela */
 #container-horas {
     position: relative;
-    max-height: 450px; 
+    max-height: 450px;
     overflow-y: auto;
     border: 1px solid #eee;
     border-radius: 8px;
     background: #fff;
 }
 
-/* Linhas divisórias das horas na timeline */
+/* Faixa de cada hora na timeline */
 .bloco-hora {
     display: flex;
     align-items: flex-start;
@@ -189,7 +185,8 @@ main {
     background: #fff;
 }
 
-/* Estilização do card de tarefa com posicionamento dinâmico via JS */
+/* Card de tarefa posicionado absolutamente via JS com base no horário.
+   top e height são calculados em pixels proporcionais à duração. */
 .tarefa-card {
     position: absolute;
     left: 65px;
@@ -222,15 +219,13 @@ main {
     transform: scale(0.99);
 }
 
-/* ---- Textos do card normal ---- */
+/* Conteúdo do card normal (tarefas >= ~45 min) */
 .info-tarefa {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
     width: 100%;
-    /* deixa espaço para os ícones não sobreporem o título */
-    padding-right: 48px;
 }
 
 .info-tarefa strong {
@@ -248,7 +243,8 @@ main {
     font-weight: 500;
 }
 
-/* ---- Layout de linha única (cards compactos: < 45 min) ---- */
+/* Layout compacto para tarefas curtas (< ~45 min):
+   título e horário ficam lado a lado numa única linha */
 .card-linha-unica {
     display: flex;
     align-items: center;
@@ -276,9 +272,7 @@ main {
     flex-shrink: 0;
 }
 
-
-
-/* Estilo para o botão de criação de novas atividades */
+/* Botão de adicionar nova tarefa */
 .btn-adicionar {
     display: block;
     background-color: #27ae60;
@@ -296,7 +290,7 @@ main {
     background-color: #219150;
 }
 
-/* Formatação dos elementos de entrada de dados (Labels e Inputs) */
+/* Campos do formulário */
 .form-grupo {
     margin-bottom: 15px;
     display: flex;
@@ -318,7 +312,6 @@ main {
     outline-color: #4a90e2;
 }
 
-/* Estilo para o botão de confirmação do formulário */
 .btn-salvar {
     background-color: #4a90e2;
     color: white;
@@ -335,7 +328,8 @@ main {
     background-color: #357abd;
 }
 
-/* Botão de exclusão no formulário de edição (oculto por padrão) */
+/* Botão de exclusão — só aparece no modo de edição (display alterado via JS).
+   Estilo outline vermelho para deixar claro que é uma ação destrutiva. */
 .btn-excluir {
     display: none;
     background-color: #fff;
