@@ -139,18 +139,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const divT = document.createElement('div');
             divT.classList.add('tarefa-card');
             divT.style.top = `${topo + 2}px`;
-            divT.style.height = `${Math.max(altura - 4, 70)}px`; 
+            divT.style.height = `${Math.max(altura - 4, 22)}px`;
 
-            divT.innerHTML = `
-                <div class="info-tarefa">
-                    <strong>${t.titulo}</strong>
-                    <small>${t.inicio} - ${t.fim}</small>
-                </div>
-                <div class="acoes-tarefa">
-                    <span class="btn-acao" onclick="editarTarefa(${t.id})">✏️</span>
-                    <span class="btn-acao" onclick="excluirTarefa(${t.id})">🗑️</span>
-                </div>
-            `;
+            // Todos os cards são clicáveis e abrem o formulário de edição
+            divT.style.cursor = 'pointer';
+            divT.addEventListener('click', () => editarTarefa(t.id));
+
+            const isCompacta = altura < 75;
+            if (isCompacta) {
+                // Linha única para tarefas curtas (< ~45 min)
+                divT.innerHTML = `
+                    <div class="card-linha-unica">
+                        <strong class="card-titulo">${t.titulo}</strong>
+                        <small class="card-horario">${t.inicio}–${t.fim}</small>
+                    </div>
+                `;
+            } else {
+                // Card normal com título e horário
+                divT.innerHTML = `
+                    <div class="info-tarefa">
+                        <strong>${t.titulo}</strong>
+                        <small>${t.inicio} – ${t.fim}</small>
+                    </div>
+                `;
+            }
             timelineContent.appendChild(divT);
         });
 
@@ -174,7 +186,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('hora-fim').value = tarefaParaEditar.fim;
                 document.getElementById('observacoes').value = tarefaParaEditar.obs;
                 document.querySelector('.btn-salvar').textContent = "Atualizar Tarefa";
+
+                // Exibe o botão de excluir somente no modo de edição
+                const btnExcluir = document.getElementById('btn-excluir');
+                if (btnExcluir) btnExcluir.style.display = 'block';
             }
+        }
+
+        // Botão excluir no formulário de edição
+        const btnExcluir = document.getElementById('btn-excluir');
+        if (btnExcluir) {
+            btnExcluir.addEventListener('click', () => {
+                if (confirm("Deseja realmente apagar esta atividade?")) {
+                    let tarefas = buscarTodasTarefas();
+                    tarefas = tarefas.filter(t => t.id != editId);
+                    localStorage.setItem('minha_agenda_tarefas', JSON.stringify(tarefas));
+                    window.location.href = `diario.html?mes=${mesIdx}&dia=${diaNum}`;
+                }
+            });
         }
 
         form.addEventListener('submit', (e) => {
@@ -185,6 +214,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (paraMinutos(hFimNova) <= paraMinutos(hInicioNova)) {
                 alert("O horário de término deve ser posterior ao início.");
+                return;
+            }
+
+            const tarefasDoDia = buscarTodasTarefas().filter(t => t.dia === diaNum && t.mes === mesIdx);
+            const conflito = tarefasDoDia.some(t => {
+                if (editId && t.id == editId) return false;
+                const ini = paraMinutos(t.inicio);
+                const fim = paraMinutos(t.fim);
+                return paraMinutos(hInicioNova) < fim && paraMinutos(hFimNova) > ini;
+            });
+
+            if (conflito) {
+                alert("Conflito de horário: já existe uma atividade nesse intervalo. Ajuste o horário e tente novamente.");
                 return;
             }
 
