@@ -5,32 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda Estudantil</title>
-    <!-- Link para o CSS unificado -->
+    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="container">
+        
         <header>
             <h1>Agenda Estudantil</h1>
             <span id="ano-atual"></span>
         </header>
 
         <main>
-            <!-- Seção de botões para trocar os meses exibidos -->
             <div class="selecao-semestre">
                 <button id="btn-1sem" class="btn-semestre ativo">1º Semestre</button>
                 <button id="btn-2sem" class="btn-semestre">2º Semestre</button>
             </div>
 
-            <!-- Lista onde o JS vai injetar os meses -->
             <ul class="grid-meses" id="container-meses">
-                <!-- Dinâmico via JS -->
-            </ul>
+                </ul>
         </main>
     </div>
 
-    <!-- Importante: O script deve vir por último -->
     <script src="js/main.js"></script>
 </body>
 </html>

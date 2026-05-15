@@ -1,6 +1,4 @@
-/* css/style.css */
-
-/* 1. RESET E CONFIGURAÇÕES GLOBAIS */
+/* Configurações de reset para garantir consistência entre diferentes navegadores */
 * {
     margin: 0;
     padding: 0;
@@ -8,6 +6,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Definição do layout da página e alinhamento do viewport */
 body {
     background-color: #f0f2f5;
     display: flex;
@@ -17,7 +16,7 @@ body {
     padding: 20px 20px 20px 40px; 
 }
 
-/* 2. CONTAINER PRINCIPAL (SIMULANDO MOBILE) */
+/* Mockup do container mobile: centraliza a aplicação em uma largura fixa */
 .container {
     width: 320px; 
     background-color: #ffffff;
@@ -28,7 +27,7 @@ body {
     flex-direction: column;
 }
 
-/* 3. CABEÇALHO (UI) */
+/* Estilização do topo da aplicação e branding */
 header {
     background-color: #4a90e2;
     color: white;
@@ -48,11 +47,12 @@ header h1 {
     display: block;
 }
 
-/* 4. ÁREA DE CONTEÚDO (MAIN) */
+/* Área principal de interação do usuário */
 main {
     padding: 15px;
 }
 
+/* Estilo para links de navegação secundária */
 .btn-voltar {
     display: inline-block;
     margin-bottom: 20px; 
@@ -61,7 +61,7 @@ main {
     font-size: 0.85rem;
 }
 
-/* ESTILO DOS BOTÕES DE SEMESTRE */
+/* Controles de alternância de período (Semestres) */
 .selecao-semestre {
     display: flex;
     gap: 10px;
@@ -81,12 +81,13 @@ main {
     transition: 0.3s;
 }
 
+/* Feedback visual para o botão de semestre ativo */
 .btn-semestre.ativo {
     background: #4a90e2;
     color: white;
 }
 
-/* 5. GRID DE MESES (INDEX.HTML) */
+/* Organização visual dos meses na tela principal */
 .grid-meses {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -108,7 +109,7 @@ main {
     transition: all 0.2s ease;
 }
 
-/* 6. CALENDÁRIO MENSAL (MENSAL.HTML) */
+/* Estrutura de cabeçalho dos dias da semana (D S T Q Q S S) */
 .semana-cabecalho {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -119,6 +120,7 @@ main {
     margin-bottom: 10px;
 }
 
+/* Grid de dias do calendário com proporção 1:1 */
 .grid-dias {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -137,6 +139,7 @@ main {
     position: relative;
 }
 
+/* Estilização para dias que não pertencem ao mês vigente */
 .dia-vazio {
     background-color: #f9f9f9;
     color: #ccc;
@@ -153,13 +156,14 @@ main {
     z-index: 1;
 }
 
+/* Indicador visual para dias com compromissos agendados */
 .dia-com-tarefa {
     background-color: #d1e7ff !important;
     font-weight: bold;
     color: #4a90e2 !important;
 }
 
-/* 7. LINHA DO TEMPO DIÁRIA */
+/* Área de scroll da timeline de horas */
 #container-horas {
     position: relative;
     max-height: 450px; 
@@ -169,6 +173,7 @@ main {
     background: #fff;
 }
 
+/* Linhas divisórias das horas na timeline */
 .bloco-hora {
     display: flex;
     align-items: flex-start;
@@ -184,7 +189,7 @@ main {
     background: #fff;
 }
 
-/* Card da Tarefa - Layout Híbrido */
+/* Estilização do card de tarefa com posicionamento dinâmico via JS */
 .tarefa-card {
     position: absolute;
     left: 65px;
@@ -205,10 +210,10 @@ main {
     justify-content: space-between;
 }
 
+/* Alinhamento dos textos da atividade */
 .info-tarefa {
     display: flex;
     flex-direction: column;
-    /* Alinhado à esquerda conforme solicitado */
     align-items: flex-start; 
     text-align: left;
     flex: 1;
@@ -230,7 +235,7 @@ main {
     font-weight: 500;
 }
 
-/* Botões de Ação na base à direita */
+/* Área de botões de edição e exclusão dentro do card */
 .acoes-tarefa {
     display: flex;
     gap: 12px;
@@ -238,7 +243,6 @@ main {
     padding-top: 5px;
     border-top: 1px solid rgba(74, 144, 226, 0.1);
     width: 100%;
-    /* Empurrado para a direita conforme solicitado */
     justify-content: flex-end; 
 }
 
@@ -254,6 +258,7 @@ main {
     transform: scale(1.2);
 }
 
+/* Estilo para o botão de criação de novas atividades */
 .btn-adicionar {
     display: block;
     background-color: #27ae60;
@@ -271,7 +276,7 @@ main {
     background-color: #219150;
 }
 
-/* 8. FORMULÁRIO (FORMULARIO.HTML) */
+/* Formatação dos elementos de entrada de dados (Labels e Inputs) */
 .form-grupo {
     margin-bottom: 15px;
     display: flex;
@@ -293,6 +298,7 @@ main {
     outline-color: #4a90e2;
 }
 
+/* Estilo para o botão de confirmação do formulário */
 .btn-salvar {
     background-color: #4a90e2;
     color: white;
