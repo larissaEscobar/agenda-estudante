@@ -1,31 +1,47 @@
+// js/main.js
+
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. CONFIGURAÇÕES E PARÂMETROS ---
+    // --- 1. CONFIGURAÇÕES E PARÂMETROS COM FALLBACK ---
+    // Esta parte garante que, se abrir o arquivo direto, o sistema use a data de hoje.
     const params = new URLSearchParams(window.location.search);
-    const mesIdx = params.get('mes') !== null ? parseInt(params.get('mes')) : null;
-    const diaNum = params.get('dia') !== null ? parseInt(params.get('dia')) : null;
+    const dataHoje = new Date();
+
+    let mesIdx = params.get('mes') !== null ? parseInt(params.get('mes')) : dataHoje.getMonth();
+    let diaNum = params.get('dia') !== null ? parseInt(params.get('dia')) : dataHoje.getDate();
     const editId = params.get('editId'); 
     
     const spanAno = document.querySelectorAll('#ano-atual');
-    const anoAtual = new Date().getFullYear();
+    const anoAtual = dataHoje.getFullYear();
     const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
     const h1Principal = document.querySelector('header h1');
 
-    // --- 2. CABEÇALHO ---
+    // --- 2. CABEÇALHO DINÂMICO (AJUSTA TÍTULOS E SUBTÍTULOS) ---
     spanAno.forEach(span => {
-        if (diaNum && mesIdx !== null) {
+        if (document.getElementById('container-horas') || document.getElementById('titulo-dia')) {
+            // Tela de Diário
             if (h1Principal) h1Principal.textContent = `Dia ${diaNum.toString().padStart(2, '0')}`;
             span.textContent = `${meses[mesIdx]} de ${anoAtual}`;
-        } else if (mesIdx !== null) {
+        } 
+        else if (document.getElementById('container-dias')) {
+            // Tela Mensal
             if (h1Principal) h1Principal.textContent = meses[mesIdx];
             span.textContent = anoAtual;
-        } else {
+        } 
+        else if (document.getElementById('form-tarefa')) {
+            // Tela de Formulário
+            if (h1Principal && !editId) h1Principal.textContent = "Nova Tarefa";
+            if (h1Principal && editId) h1Principal.textContent = "Editar Tarefa";
+            span.textContent = `${diaNum.toString().padStart(2, '0')} de ${meses[mesIdx]}`;
+        }
+        else {
+            // Tela Inicial (Index)
             if (h1Principal) h1Principal.textContent = "Agenda Estudantil";
             span.textContent = `Ano Letivo: ${anoAtual}`;
         }
     });
 
-    // --- 3. TELA INICIAL (SEMESTRES) ---
+    // --- 3. TELA INICIAL (LÓGICA DE SEMESTRES) ---
     const containerMeses = document.getElementById('container-meses');
     if (containerMeses) {
         const btn1 = document.getElementById('btn-1sem');
@@ -40,14 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 containerMeses.appendChild(li);
             });
         };
+
         if(btn1) btn1.onclick = () => { btn1.classList.add('ativo'); btn2.classList.remove('ativo'); renderMeses(semestres[0]); };
         if(btn2) btn2.onclick = () => { btn2.classList.add('ativo'); btn1.classList.remove('ativo'); renderMeses(semestres[1]); };
-        renderMeses(semestres[0]);
+        
+        // Abre no semestre correspondente ao mês atual
+        if (mesIdx > 5) {
+            if(btn2) btn2.click();
+        } else {
+            if(btn1) btn1.click();
+        }
     }
 
-    // --- 4. CALENDÁRIO MENSAL (DIAS VIZINHOS) ---
+    // --- 4. CALENDÁRIO MENSAL (GERAÇÃO DOS DIAS) ---
     const containerDias = document.getElementById('container-dias');
-    if (containerDias && mesIdx !== null) {
+    if (containerDias) {
         const primeiroDiaSemana = new Date(anoAtual, mesIdx, 1).getDay();
         const diasNoMes = new Date(anoAtual, mesIdx + 1, 0).getDate();
         const ultimoDiaMesAnterior = new Date(anoAtual, mesIdx, 0).getDate();
@@ -55,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         containerDias.innerHTML = '';
 
+        // Dias do mês anterior (cinza)
         for (let j = primeiroDiaSemana - 1; j >= 0; j--) {
             const li = document.createElement('li');
             li.classList.add('dia-vazio');
@@ -62,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             containerDias.appendChild(li);
         }
 
+        // Dias do mês atual
         for (let i = 1; i <= diasNoMes; i++) {
             const li = document.createElement('li');
             const a = document.createElement('a');
@@ -72,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             containerDias.appendChild(li);
         }
 
+        // Completa o grid (dias do próximo mês)
         const totalAteAgora = containerDias.children.length;
         const diasRestantes = (totalAteAgora > 35 ? 42 : 35) - totalAteAgora;
         for (let k = 1; k <= diasRestantes; k++) {
@@ -82,12 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. TIMELINE DIÁRIA (LÓGICA DE POSICIONAMENTO) ---
+    // --- 5. TIMELINE DIÁRIA (POSICIONAMENTO DOS CARDS) ---
     const containerHoras = document.getElementById('container-horas');
-    if (containerHoras && diaNum) {
+    if (containerHoras) {
         const ALTURA_HORA = 100; 
         const fatorEscala = ALTURA_HORA / 60;
 
+        // Ajusta links de navegação
         const btnVoltar = document.getElementById('btn-voltar-mes');
         if (btnVoltar) btnVoltar.href = `mensal.html?mes=${mesIdx}`;
 
@@ -100,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timelineContent.style.width = '100%';
         timelineContent.style.height = `${24 * ALTURA_HORA}px`;
 
+        // Gera as 24 linhas de horas
         for (let h = 0; h < 24; h++) {
             const div = document.createElement('div');
             div.classList.add('bloco-hora');
@@ -108,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timelineContent.appendChild(div);
         }
 
+        // Filtra e posiciona tarefas do dia
         const tarefasDoDia = buscarTodasTarefas().filter(t => t.dia === diaNum && t.mes === mesIdx);
         tarefasDoDia.forEach(t => {
             const [hIni, mIni] = t.inicio.split(':').map(Number);
@@ -118,13 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const divT = document.createElement('div');
             divT.classList.add('tarefa-card');
-            
-            // O JS cuida apenas do topo e da altura (dinâmicos)
-            // +2 e -4 criam o respiro visual entre blocos
             divT.style.top = `${topo + 2}px`;
-            divT.style.height = `${Math.max(altura - 4, 35)}px`; 
+            divT.style.height = `${Math.max(altura - 4, 70)}px`; // Espaço para texto e ícones
 
-            // Estrutura HTML limpa usando as classes do CSS
             divT.innerHTML = `
                 <div class="info-tarefa">
                     <strong>${t.titulo}</strong>
@@ -141,79 +166,61 @@ document.addEventListener('DOMContentLoaded', () => {
         containerHoras.appendChild(timelineContent);
     }
 
-    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR) ---
+    // --- 6. FORMULÁRIO (SALVAR / EDITAR) ---
     const form = document.getElementById('form-tarefa');
-    
-    if (form && editId) {
-        const tarefas = buscarTodasTarefas();
-        const tarefaParaEditar = tarefas.find(t => t.id == editId);
-        if (tarefaParaEditar) {
-            document.getElementById('titulo').value = tarefaParaEditar.titulo;
-            document.getElementById('local').value = tarefaParaEditar.local;
-            document.getElementById('hora-inicio').value = tarefaParaEditar.inicio;
-            document.getElementById('hora-fim').value = tarefaParaEditar.fim;
-            document.getElementById('observacoes').value = tarefaParaEditar.obs;
-            document.querySelector('.btn-salvar').textContent = "Atualizar Tarefa";
-        }
-    }
-
     if (form) {
+        // Ajusta botão cancelar
+        const btnCancelar = document.getElementById('btn-cancelar');
+        if (btnCancelar) btnCancelar.href = `diario.html?mes=${mesIdx}&dia=${diaNum}`;
+
+        const tarefas = buscarTodasTarefas();
+        
+        // Se for edição, preenche o formulário
+        if (editId) {
+            const tarefaParaEditar = tarefas.find(t => t.id == editId);
+            if (tarefaParaEditar) {
+                document.getElementById('titulo').value = tarefaParaEditar.titulo;
+                document.getElementById('local').value = tarefaParaEditar.local;
+                document.getElementById('hora-inicio').value = tarefaParaEditar.inicio;
+                document.getElementById('hora-fim').value = tarefaParaEditar.fim;
+                document.getElementById('observacoes').value = tarefaParaEditar.obs;
+                document.querySelector('.btn-salvar').textContent = "Atualizar Tarefa";
+            }
+        }
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const hInicioNova = document.getElementById('hora-inicio').value;
             const hFimNova = document.getElementById('hora-fim').value;
-            const tituloNova = document.getElementById('titulo').value;
 
-            const paraMinutos = (horario) => {
-                const [h, m] = horario.split(':').map(Number);
-                return (h * 60) + m;
-            };
+            const paraMinutos = (hor) => hor.split(':').reduce((h, m) => h * 60 + +m);
 
-            const inicioNovo = paraMinutos(hInicioNova);
-            const fimNovo = paraMinutos(hFimNova);
-
-            if (fimNovo <= inicioNovo) {
+            if (paraMinutos(hFimNova) <= paraMinutos(hInicioNova)) {
                 alert("O horário de término deve ser posterior ao início.");
-                return;
-            }
-
-            let tarefas = buscarTodasTarefas();
-
-            const temConflito = tarefas.find(t => {
-                if (t.dia !== diaNum || t.mes !== mesIdx) return false;
-                if (editId && t.id == editId) return false;
-
-                const inicioEx = paraMinutos(t.inicio);
-                const fimEx = paraMinutos(t.fim);
-
-                return (inicioNovo < fimEx && fimNovo > inicioEx);
-            });
-
-            if (temConflito) {
-                alert(`Conflito de Horário!\nJá existe a tarefa "${temConflito.titulo}" das ${temConflito.inicio} às ${temConflito.fim}.`);
                 return;
             }
 
             const dadosTarefa = {
                 id: editId ? parseInt(editId) : Date.now(),
-                mes: mesIdx, dia: diaNum,
-                titulo: tituloNova,
+                mes: mesIdx, 
+                dia: diaNum,
+                titulo: document.getElementById('titulo').value,
                 local: document.getElementById('local').value,
                 inicio: hInicioNova,
                 fim: hFimNova,
                 obs: document.getElementById('observacoes').value
             };
 
+            let todas = buscarTodasTarefas();
             if (editId) {
-                const index = tarefas.findIndex(t => t.id == editId);
-                tarefas[index] = dadosTarefa;
+                const index = todas.findIndex(t => t.id == editId);
+                todas[index] = dadosTarefa;
             } else {
-                tarefas.push(dadosTarefa);
+                todas.push(dadosTarefa);
             }
 
-            localStorage.setItem('minha_agenda_tarefas', JSON.stringify(tarefas));
-            alert(editId ? 'Tarefa atualizada!' : 'Tarefa salva!');
+            localStorage.setItem('minha_agenda_tarefas', JSON.stringify(todas));
             window.location.href = `diario.html?mes=${mesIdx}&dia=${diaNum}`;
         });
     }

@@ -9,42 +9,42 @@
 <body>
     <div class="container">
         <header>
-            <h1>Nova Tarefa</h1>
-            <span id="ano-atual"></span>
+            <h1 id="titulo-form">Nova Tarefa</h1>
+            <span id="ano-atual">Carregando...</span>
         </header>
 
         <main>
-            <a href="javascript:history.back()" class="btn-voltar">← Cancelar</a>
+            <a href="#" id="btn-cancelar" class="btn-voltar">← Cancelar</a>
             
-        <form id="form-tarefa">
-            <div class="form-grupo">
-                <label for="titulo">Título da Atividade:</label>
-                <input type="text" id="titulo" placeholder="Ex: Prova de Sistemas Operacionais" required>
-            </div>
-
-            <div class="form-grupo">
-                <label for="local">Local:</label>
-                <input type="text" id="local" placeholder="Ex: Laboratório 03 ou Remoto">
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <div class="form-grupo" style="flex: 1;">
-                    <label for="hora-inicio">Início:</label>
-                    <input type="time" id="hora-inicio" required>
+            <form id="form-tarefa">
+                <div class="form-grupo">
+                    <label for="titulo">Título da Atividade:</label>
+                    <input type="text" id="titulo" placeholder="Ex: Prova de Sistemas Operacionais" required>
                 </div>
-                <div class="form-grupo" style="flex: 1;">
-                    <label for="hora-fim">Fim:</label>
-                    <input type="time" id="hora-fim" required>
+
+                <div class="form-grupo">
+                    <label for="local">Local:</label>
+                    <input type="text" id="local" placeholder="Ex: Laboratório 03 ou Remoto">
                 </div>
-            </div>
 
-            <div class="form-grupo">
-                <label for="observacoes">Observações (Opcional):</label>
-                <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais..."></textarea>
-            </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-grupo" style="flex: 1;">
+                        <label for="hora-inicio">Início:</label>
+                        <input type="time" id="hora-inicio" required>
+                    </div>
+                    <div class="form-grupo" style="flex: 1;">
+                        <label for="hora-fim">Fim:</label>
+                        <input type="time" id="hora-fim" required>
+                    </div>
+                </div>
 
-            <button type="submit" class="btn-salvar">Salvar na Agenda</button>
-        </form>
+                <div class="form-grupo">
+                    <label for="observacoes">Observações (Opcional):</label>
+                    <textarea id="observacoes" rows="3" placeholder="Detalhes adicionais..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-salvar">Salvar na Agenda</button>
+            </form>
         </main>
     </div>
     <script src="js/main.js"></script>
