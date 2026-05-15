@@ -11,10 +11,10 @@
 body {
     background-color: #f0f2f5;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; 
     align-items: flex-start;
     min-height: 100vh;
-    padding: 20px;
+    padding: 20px 20px 20px 40px; 
 }
 
 /* 2. CONTAINER PRINCIPAL (SIMULANDO MOBILE) */
@@ -159,10 +159,10 @@ main {
     color: #4a90e2 !important;
 }
 
-/* 7. LINHA DO TEMPO DIÁRIA (DIARIO.HTML - ESTILO TEAMS) */
+/* 7. LINHA DO TEMPO DIÁRIA */
 #container-horas {
     position: relative;
-    max-height: 400px;
+    max-height: 450px; 
     overflow-y: auto;
     border: 1px solid #eee;
     border-radius: 8px;
@@ -184,40 +184,68 @@ main {
     background: #fff;
 }
 
-/* Card da Tarefa Flutuante */
+/* Card da Tarefa - Layout Híbrido */
 .tarefa-card {
     position: absolute;
-    left: 60px;
+    left: 65px;
     right: 10px;
     background-color: #e8f2ff;
     color: #2c5282;
+    border: 1px solid #b8c9de;
     border-left: 4px solid #4a90e2;
-    border-radius: 4px;
-    padding: 6px;
-    font-size: 0.75rem;
+    border-radius: 8px;
+    padding: 10px;
     z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+    overflow: hidden;
+    
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    justify-content: space-between;
 }
 
-/* Botões de Ação (Lápis e Lixeira) */
-.acoes-tarefa {
-    position: absolute;
-    top: 4px;
-    right: 4px;
+.info-tarefa {
     display: flex;
-    gap: 6px;
-    background: rgba(232, 242, 255, 0.8);
-    padding: 2px;
-    border-radius: 4px;
+    flex-direction: column;
+    /* Alinhado à esquerda conforme solicitado */
+    align-items: flex-start; 
+    text-align: left;
+    flex: 1;
+    width: 100%;
+}
+
+.info-tarefa strong {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    white-space: normal;
+    word-wrap: break-word;
+    display: block;
+}
+
+.info-tarefa small {
+    font-size: 0.75rem;
+    color: #5a7da9;
+    font-weight: 500;
+}
+
+/* Botões de Ação na base à direita */
+.acoes-tarefa {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(74, 144, 226, 0.1);
+    width: 100%;
+    /* Empurrado para a direita conforme solicitado */
+    justify-content: flex-end; 
 }
 
 .btn-acao {
     cursor: pointer;
-    font-size: 0.85rem;
-    opacity: 0.6;
+    font-size: 1rem;
+    opacity: 0.7;
     transition: 0.2s;
 }
 
@@ -236,6 +264,11 @@ main {
     border-radius: 6px;
     margin-top: 15px;
     font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-adicionar:hover {
+    background-color: #219150;
 }
 
 /* 8. FORMULÁRIO (FORMULARIO.HTML) */
@@ -257,6 +290,7 @@ main {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 0.9rem;
+    outline-color: #4a90e2;
 }
 
 .btn-salvar {
@@ -268,4 +302,9 @@ main {
     font-weight: bold;
     width: 100%;
     cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-salvar:hover {
+    background-color: #357abd;
 }

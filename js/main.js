@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const mesIdx = params.get('mes') !== null ? parseInt(params.get('mes')) : null;
     const diaNum = params.get('dia') !== null ? parseInt(params.get('dia')) : null;
-    const editId = params.get('editId'); // Parâmetro para edição
+    const editId = params.get('editId'); 
     
     const spanAno = document.querySelectorAll('#ano-atual');
     const anoAtual = new Date().getFullYear();
@@ -82,9 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. TIMELINE DIÁRIA (COM EDIÇÃO E EXCLUSÃO) ---
+    // --- 5. TIMELINE DIÁRIA (LÓGICA DE POSICIONAMENTO) ---
     const containerHoras = document.getElementById('container-horas');
     if (containerHoras && diaNum) {
+        const ALTURA_HORA = 100; 
+        const fatorEscala = ALTURA_HORA / 60;
+
         const btnVoltar = document.getElementById('btn-voltar-mes');
         if (btnVoltar) btnVoltar.href = `mensal.html?mes=${mesIdx}`;
 
@@ -95,12 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const timelineContent = document.createElement('div');
         timelineContent.style.position = 'relative';
         timelineContent.style.width = '100%';
-        timelineContent.style.height = `${24 * 60}px`;
+        timelineContent.style.height = `${24 * ALTURA_HORA}px`;
 
         for (let h = 0; h < 24; h++) {
             const div = document.createElement('div');
             div.classList.add('bloco-hora');
-            div.style.height = '60px';
+            div.style.height = `${ALTURA_HORA}px`; 
             div.innerHTML = `<span class="label-hora">${h.toString().padStart(2, '0')}:00</span>`;
             timelineContent.appendChild(div);
         }
@@ -109,32 +112,36 @@ document.addEventListener('DOMContentLoaded', () => {
         tarefasDoDia.forEach(t => {
             const [hIni, mIni] = t.inicio.split(':').map(Number);
             const [hFim, mFim] = t.fim.split(':').map(Number);
-            const topo = (hIni * 60) + mIni;
-            const altura = ((hFim * 60) + mFim) - topo;
+            
+            const topo = ((hIni * 60) + mIni) * fatorEscala;
+            const altura = (((hFim * 60) + mFim) * fatorEscala) - topo;
 
             const divT = document.createElement('div');
             divT.classList.add('tarefa-card');
-            divT.style.position = 'absolute';
-            divT.style.top = `${topo}px`;
-            divT.style.height = `${Math.max(altura, 35)}px`;
+            
+            // O JS cuida apenas do topo e da altura (dinâmicos)
+            // +2 e -4 criam o respiro visual entre blocos
+            divT.style.top = `${topo + 2}px`;
+            divT.style.height = `${Math.max(altura - 4, 35)}px`; 
 
+            // Estrutura HTML limpa usando as classes do CSS
             divT.innerHTML = `
+                <div class="info-tarefa">
+                    <strong>${t.titulo}</strong>
+                    <small>${t.inicio} - ${t.fim}</small>
+                </div>
                 <div class="acoes-tarefa">
                     <span class="btn-acao" onclick="editarTarefa(${t.id})">✏️</span>
                     <span class="btn-acao" onclick="excluirTarefa(${t.id})">🗑️</span>
                 </div>
-                <strong>${t.titulo}</strong>
-                <small>${t.inicio} - ${t.fim}</small>
             `;
             timelineContent.appendChild(divT);
         });
 
         containerHoras.appendChild(timelineContent);
-        containerHoras.style.maxHeight = '400px'; 
-        containerHoras.style.overflowY = 'auto';
     }
 
-    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR COM VALIDAÇÃO DE CONFLITO) ---
+    // --- 6. FORMULÁRIO (SALVAR / ATUALIZAR) ---
     const form = document.getElementById('form-tarefa');
     
     if (form && editId) {
@@ -158,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const hFimNova = document.getElementById('hora-fim').value;
             const tituloNova = document.getElementById('titulo').value;
 
-            // Função auxiliar para converter "HH:MM" em minutos totais
             const paraMinutos = (horario) => {
                 const [h, m] = horario.split(':').map(Number);
                 return (h * 60) + m;
@@ -167,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const inicioNovo = paraMinutos(hInicioNova);
             const fimNovo = paraMinutos(hFimNova);
 
-            // Validação 1: Ordem cronológica
             if (fimNovo <= inicioNovo) {
                 alert("O horário de término deve ser posterior ao início.");
                 return;
@@ -175,16 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let tarefas = buscarTodasTarefas();
 
-            // Validação 2: Verificar conflitos no mesmo dia
             const temConflito = tarefas.find(t => {
-                // Só checa tarefas do mesmo dia/mês, ignorando a própria se for edição
                 if (t.dia !== diaNum || t.mes !== mesIdx) return false;
                 if (editId && t.id == editId) return false;
 
                 const inicioEx = paraMinutos(t.inicio);
                 const fimEx = paraMinutos(t.fim);
 
-                // Lógica de colisão de intervalos
                 return (inicioNovo < fimEx && fimNovo > inicioEx);
             });
 
@@ -216,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 7. FUNÇÕES GLOBAIS (WINDOW) PARA AÇÕES ---
+    // --- 7. FUNÇÕES GLOBAIS ---
     window.excluirTarefa = (id) => {
         if (confirm("Deseja realmente apagar esta atividade?")) {
             let tarefas = buscarTodasTarefas();
